@@ -27,7 +27,7 @@ class Opentron():
 			ports = []
 			while ( ports == [] ):
 
-				print('\033[2J\033[H') # Clear Screen & Home Cursor
+				print('\033[2J\033[H', end="") # Clear Screen & Home Cursor
 				ports = robot.get_serial_ports_list()
 				if not ports:
 					print('Please physically connect Opentron robot to computer.\n')
@@ -55,11 +55,14 @@ class Opentron():
 
 				# Case : Successful
 				if robot.is_connected():
-					robot.home()
-					sleep(1)
 					print('\nSuccessfully connected.')
-					sleep(2)
-					print("\033[A\033[2K\r", end="")
+					print('\nPreping to start...')
+					robot.reset()
+					robot.home()
+					print('\nTron is fully operational. Proceeding to protocol(s).')
+					sleep(1)
+					flush()
+					print('\033[2J\033[H', end="") # Clear Screen & Home Cursor
 					break
 
 				# Case : Unsuccessful
@@ -141,8 +144,11 @@ class Opentron():
 
 	def __exit__( self, exc_type, exc_val, traceback ):
 
-		if not self.homed:
-			robot.home()
+		print('\033[2J\033[H', end="") # Clear Screen & Home Cursor
+		print('Homing, Resetting & Disconnectig...')
+		robot.home()
 		robot.reset()
 		robot.disconnect()
+		print('Exitig...')
+		sleep(2)
 		sys.exit(0)
