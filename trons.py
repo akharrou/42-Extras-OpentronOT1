@@ -18,7 +18,6 @@ class Opentron():
 	def __init__( self, protocols=[] ):
 
 		self._protocols = protocols
-		self._homed = True
 
 	def __enter__( self ):
 
@@ -56,13 +55,13 @@ class Opentron():
 				# Case : Successful
 				if robot.is_connected():
 					print('\nSuccessfully connected.')
-					print('\nPreping to start...')
+					print('Preping to start...')
 					robot.reset()
 					robot.home()
 					print('\nTron is fully operational. Proceeding to protocol(s).')
 					sleep(1)
-					flush()
 					print('\033[2J\033[H', end="") # Clear Screen & Home Cursor
+					flush()
 					break
 
 				# Case : Unsuccessful
@@ -112,35 +111,6 @@ class Opentron():
 
 	def runAll( self ):
 		run()
-
-	def interactive( self ):
-
-		# CONTAINERS ===========================================
-
-		print('1 - Containers:\n')
-		self._containers = []
-
-		print('How many containers do you need ?')
-		total_containers = int(input())
-		for i in range(total_containers):
-			pass
-
-
-
-
-		# INSTRUMENTS ==========================================
-
-		print('2 - Instruments:\n')
-		self._instruments = []
-
-
-
-
-		# SCRIPT ===============================================
-
-		print('Up to you to write the script ¯\_(ツ)_/¯')
-
-
 
 	def __exit__( self, exc_type, exc_val, traceback ):
 
