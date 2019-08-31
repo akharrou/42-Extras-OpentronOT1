@@ -51,15 +51,16 @@ class Opentron():
 
 		if protocols == []:
 			protocols = self.protocols
-		else:
-			for file in protocols:
-				with open( file, 'r' ) as fd:
-					exec(
-                        compile( source   = file,
-                                 filename = 'error.log',
-                                 mode     = 'exec'
-						)
-					)
+		elif type(protocols) == type(str()):
+			protocols = list(protocols)
+		for file in protocols:
+			with open( file, 'r' ) as fd:
+				exec(
+					compile(	source   = file,
+								filename = 'error.log',
+								mode     = 'exec'
+				)
+			)
 
 	def runAll( self ):
 		run()
