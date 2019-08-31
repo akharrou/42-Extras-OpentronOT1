@@ -15,60 +15,68 @@ from opentrons.util import environment
 
 class Opentron():
 
-	def __init__( self, homed=True, protocols=[] ):
+	def __init__( self, protocols=[] ):
 
 		self._protocols = protocols
-		self._homed = homed
+		self._homed = True
 
 	def __enter__( self ):
 
-		while (1):
+		try:
+			while (1):
 
-			ports = []
-			while ( ports == [] ):
+				ports = []
+				while ( ports == [] ):
 
-				print('\033[2J\033[H') # Clear Screen & Home Cursor
-				ports = robot.get_serial_ports_list()
-				if not ports:
-					print('Please physically connect Opentron robot to computer.')
-					print("When done press '\033[3menter\033[0m'.")
-					input()
-				else:
-					break
-
-			print("Available ports:\n")
-			for index, port in enumerate ( ports, 1 ):
-				print('{} - {}'.format( index, port ))
-
-			try:
-
-				# Get port index
-				print("\nSelect Opentron port: ", end="")
-				idx = int(input())
-				while ( 0 >= idx or idx > len( ports ) ):
-					print("\033[A\033[2K\r", end="")
-					print("Select Opentron port: ", end="")
-					idx = int(input())
-
-				# Connect
-				robot.connect( ports[ idx - 1 ] )
-				sleep(1)
-				print('Successfully connected.')
-				sleep(2)
-				print("\033[A\033[2K\r", end="")
-
-				# Case : Unsuccessful
-				if not robot.is_connected():
-					print('Failed to connect to robot.')
-					ports.remove( ports[idx] )
+					print('\033[2J\033[H') # Clear Screen & Home Cursor
+					ports = robot.get_serial_ports_list()
 					if not ports:
-						print('Abort - Failed connection.')
-						sys.exit(1)
+						print('Please physically connect Opentron robot to computer.\n')
+						print("Press '\033[3menter\033[0m' when done.")
+						print("Press '\033[3mctrl-c\033[0m' to exit.")
+						input()
+					else:
+						break
 
-			except Exception as e:
-				pass
+				print("Available ports:\n")
+				for index, port in enumerate ( ports, 1 ):
+					print('{} - {}'.format( index, port ))
 
-			return robot
+				try:
+
+					# Get port index
+					print("\nSelect Opentron port: ", end="")
+					idx = int(input())
+					while ( 0 >= idx or idx > len( ports ) ):
+						print("\033[A\033[2K\r", end="")
+						print("Select Opentron port: ", end="")
+						idx = int(input())
+
+					# Connect
+					robot.connect( ports[ idx - 1 ] )
+
+					# Case : Successful
+					if robot.is_connected():
+						robot.home()
+						sleep(1)
+						print('\nSuccessfully connected.')
+						sleep(2)
+						print("\033[A\033[2K\r", end="")
+						break
+
+					# Case : Unsuccessful
+					else:
+						print('Failed to connect to robot.')
+						ports.remove( ports[idx] )
+						if not ports:
+							print('Abort - Failed connection.')
+							sys.exit(1)
+
+				return robot
+
+		except KeyboardInterrupt:
+			print('\nExiting...')
+			sys.exit(1)
 
 
 	@property
@@ -89,9 +97,8 @@ class Opentron():
 
 	def run( self, protocols=[] ):
 
-		# If no filename(s) were passed
-		if self._protocols == []:
-			runAll()
+		if protocols == []:
+			protocols = self.protocols
 		else:
 			for file in protocols:
 				with open( file, 'r' ) as fd:
@@ -103,13 +110,40 @@ class Opentron():
 					)
 
 	def runAll( self ):
-		for file in self._protocols:
-			self.run( file )
+		run()
+
+	def interactive( self ):
+
+		# CONTAINERS ===========================================
+
+		print('1 - Containers:\n')
+		self._containers = []
+
+		print('How many containers do you need ?')
+		total_containers = int(input())
+		for i in range(total_containers):
+
+
+
+
+
+		# INSTRUMENTS ==========================================
+
+		print('2 - Instruments:\n')
+		self._instruments = []
+
+
+
+
+		# SCRIPT ===============================================
+
+		print('Up to you to write the script ¯\_(ツ)_/¯')
+
 
 
 	def __exit__( self, exc_type, exc_val, traceback ):
 
-		if not self._homed:
+		if not self.homed:
 			robot.home()
 		robot.reset()
 		robot.disconnect()
