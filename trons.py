@@ -1,11 +1,10 @@
-
 # ======================= #
 #  OpentronsRobot Module  #
 # ======================= #
 
 # DEPENDENCIES - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-from sys  import exit
+import sys
 from time import sleep
 
 from opentrons import robot, instruments, containers
@@ -37,20 +36,26 @@ class Opentron():
 				else:
 					break
 
+			print("Available ports:\n")
 			for index, port in enumerate ( ports, 1 ):
 				print('{} - {}'.format( index, port ))
-			print("Select Opentron robot port index: ")
 
 			try:
 
 				# Get port index
+				print("\nSelect Opentron port: ", end="")
 				idx = int(input())
-				while ( 0 > idx or idx > len( ports ) ):
-					print("\033[A\033[2K\r")
+				while ( 0 >= idx or idx > len( ports ) ):
+					print("\033[A\033[2K\r", end="")
+					print("Select Opentron port: ", end="")
 					idx = int(input())
 
 				# Connect
 				robot.connect( ports[ idx - 1 ] )
+				sleep(1)
+				print('Successfully connected.')
+				sleep(2)
+				print("\033[A\033[2K\r", end="")
 
 				# Case : Unsuccessful
 				if not robot.is_connected():
@@ -104,7 +109,7 @@ class Opentron():
 
 	def __exit__( self, exc_type, exc_val, traceback ):
 
-		if not self.homed:
+		if not self._homed:
 			robot.home()
 		robot.reset()
 		robot.disconnect()
