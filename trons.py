@@ -23,56 +23,54 @@ class Opentron():
 	def __enter__( self ):
 
 		try:
+
+			ports = []
+			while ( ports == [] ):
+
+				print('\033[2J\033[H') # Clear Screen & Home Cursor
+				ports = robot.get_serial_ports_list()
+				if not ports:
+					print('Please physically connect Opentron robot to computer.\n')
+					print("Press '\033[3menter\033[0m' when done.")
+					print("Press '\033[3mctrl-c\033[0m' to exit.")
+					input()
+				else:
+					break
+
+			print("Available ports:\n")
+			for index, port in enumerate ( ports, 1 ):
+				print('{} - {}'.format( index, port ))
+
 			while (1):
 
-				ports = []
-				while ( ports == [] ):
-
-					print('\033[2J\033[H') # Clear Screen & Home Cursor
-					ports = robot.get_serial_ports_list()
-					if not ports:
-						print('Please physically connect Opentron robot to computer.\n')
-						print("Press '\033[3menter\033[0m' when done.")
-						print("Press '\033[3mctrl-c\033[0m' to exit.")
-						input()
-					else:
-						break
-
-				print("Available ports:\n")
-				for index, port in enumerate ( ports, 1 ):
-					print('{} - {}'.format( index, port ))
-
-				try:
-
-					# Get port index
-					print("\nSelect Opentron port: ", end="")
+				# Get port index
+				print("\nSelect Opentron port: ", end="")
+				idx = int(input())
+				while ( 0 >= idx or idx > len( ports ) ):
+					print("\033[A\033[2K\rSelect Opentron port: ", end="")
 					idx = int(input())
-					while ( 0 >= idx or idx > len( ports ) ):
-						print("\033[A\033[2K\r", end="")
-						print("Select Opentron port: ", end="")
-						idx = int(input())
 
-					# Connect
-					robot.connect( ports[ idx - 1 ] )
+				# Try to Connect to Robot
+				robot.connect( ports[ idx - 1 ] )
 
-					# Case : Successful
-					if robot.is_connected():
-						robot.home()
-						sleep(1)
-						print('\nSuccessfully connected.')
-						sleep(2)
-						print("\033[A\033[2K\r", end="")
-						break
+				# Case : Successful
+				if robot.is_connected():
+					robot.home()
+					sleep(1)
+					print('\nSuccessfully connected.')
+					sleep(2)
+					print("\033[A\033[2K\r", end="")
+					break
 
-					# Case : Unsuccessful
-					else:
-						print('Failed to connect to robot.')
-						ports.remove( ports[idx] )
-						if not ports:
-							print('Abort - Failed connection.')
-							sys.exit(1)
+				# Case : Unsuccessful
+				else:
+					print('Failed to connect to robot.')
+					ports.remove( ports[idx] )
+					if not ports:
+						print('Abort - Failed connection.')
+						sys.exit(1)
 
-				return robot
+			return robot
 
 		except KeyboardInterrupt:
 			print('\nExiting...')
