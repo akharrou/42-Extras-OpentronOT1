@@ -4,19 +4,16 @@
 
 # IMPORTS - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-import sys
-from time import sleep
-
-from opentrons import robot, instruments, containers
-from opentrons.util import environment
-
+from opentrons import robot
 
 # CLASS - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 class Opentron():
 
 	def __init__( self, protocols=[] ):
+
 		self._protocols = protocols
+		self.connect()
 
 
 	# PROPERTIES ========================================
@@ -38,14 +35,19 @@ class Opentron():
 
 	def connect( self ):
 
+		print('Connecting...')
 		robot.connect( robot.get_serial_ports_list()[0] )
 		if robot.is_connected():
-			print('\nSuccessfully connected.')
+			print('\nSuccessfully Connected.')
 			robot.reset()
 			robot.home()
 
-	def load_protocol( self, protocols=[] ):
+	def load_protocols( self, protocols=[] ):
 		self._protocols.extend( protocols )
+
+	def remove_protocols( self, protocols=[] ):
+		for protocol in protocols:
+			self._protocols.remove( protocol )
 
 	def run( self, protocols=[] ):
 
@@ -56,13 +58,13 @@ class Opentron():
 		for file in protocols:
 			with open( file, 'r' ) as fd:
 				exec(
-					compile(	source   = file,
-								filename = 'error.log',
-								mode     = 'exec'
+					compile(	source=file,
+								filename='error.log',
+								mode='exec' )
 				)
-			)
 
 	def runAll( self ):
+
 		run()
 
 
@@ -70,8 +72,7 @@ class Opentron():
 
 	def __enter__( self ):
 
-			self.connect()
-			return robot
+		return opentrons.robot
 
 	def __exit__( self, exc_type, exc_val, traceback ):
 
@@ -79,4 +80,3 @@ class Opentron():
 		robot.home()
 		robot.reset()
 		robot.disconnect()
-		sys.exit(0)
