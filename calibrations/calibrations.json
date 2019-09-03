@@ -1,0 +1,75 @@
+{
+    "data": {
+        "b:Pipette": {
+            "positions": {
+                "blow_out": 23.4106,
+                "top": 8.4106,
+                "drop_tip": 24.4106,
+                "bottom": 21.4106
+            },
+            "max_volume": 200,
+            "calibration_data": {
+                "D2": {
+                    "children": {
+                        "trough-12row": {
+                            "type": "trough-12row",
+                            "delta": "{\"z\": -40.0, \"x\": -27.75, \"y\": 129.16}"
+                        }
+                    }
+                },
+                "C1": {
+                    "children": {
+                        "96-PCR-flat": {
+                            "type": "96-PCR-flat",
+                            "delta": "{\"z\": -38.0, \"x\": 9.259999999999991, \"y\": 5.66}"
+                        }
+                    }
+                },
+                "B2": {
+                    "children": {
+                        "tiprack-200ul": {
+                            "type": "tiprack-200ul",
+                            "delta": "{\"z\": -34.0, \"x\": 5.760000000000005, \"y\": 133.16}"
+                        }
+                    }
+                }
+            }
+        },
+        "a:Pipette": {
+            "positions": {
+                "blow_out": 12.0101,
+                "top": 1.0,
+                "drop_tip": 14.0101,
+                "bottom": 10.0101
+            },
+            "max_volume": 1,
+            "calibration_data": {
+                "D2": {
+                    "children": {
+                        "trough-12row": {
+                            "type": "trough-12row",
+                            "delta": "{\"z\": -37.0, \"x\": -17.24000000000001, \"y\": 136.16}"
+                        }
+                    }
+                },
+                "A1": {
+                    "children": {
+                        "tiprack-200ul": {
+                            "type": "tiprack-200ul",
+                            "delta": "{\"z\": 69.0, \"x\": 47.76, \"y\": 44.66}"
+                        }
+                    }
+                },
+                "B2": {
+                    "children": {
+                        "tiprack-200ul": {
+                            "type": "tiprack-200ul",
+                            "delta": "{\"z\": -35.0, \"x\": -20.239999999999995, \"y\": -135.84}"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "version": 1
+}
