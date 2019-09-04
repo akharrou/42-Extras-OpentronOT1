@@ -1,15 +1,16 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #                                                     #
-#                  SETUP ENVIRONEMENT                 #
+#                    PROTOCOL SETUP                   #
 #                                                     #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-from opentrons import containers, instruments
+from opentrons import robot, containers, instruments
 
-# Constants ===========================================
+# Connect & Home ======================================
 
-TOTAL_TRAY_INDICES = 96
-ROUNDS = 3
+robot.connect( robot.get_serial_ports_list()[0] )
+robot.home()
+
 
 # Types ===============================================
 
@@ -39,17 +40,19 @@ petri_slots   = [ 'B1', 'D1', 'D2', ]
 tipracks = [ containers.load ( tiprack_type , slot ) for slot in tiprack_slots ]
 trashes  = [ containers.load ( trash_type   , slot ) for slot in trash_slots   ]
 waters   = [ containers.load ( water_type   , slot ) for slot in water_slots   ]
+
 petries  = [ containers.load ( petri_type   , slot ) for slot in petri_slots   ]
 trays    = [ containers.load ( tray_type    , slot ) for slot in tray_slots    ]
 
-trash   = trashes[0]
-tiprack = tipracks[0]
-water   = waters[0]
+trash          = trashes[0]
+tiprack        = tipracks[0]
+water_trough   = waters[0]
 
 
 # Instruments(s) ======================================
 
-pipette = instruments.Pipette(
+pipette = instruments.Pipette
+(
 	axis            = 'b',
 	name            = 'p200_Single',
 	channels        = 1,
@@ -58,5 +61,5 @@ pipette = instruments.Pipette(
 	aspirate_speed  = 300,
 	dispense_speed  = 500,
 	tip_racks       = tipracks,
-	trash_container = trashes[0]
+	trash_container = trash
 )
