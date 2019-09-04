@@ -5,22 +5,26 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 from setup import *
-from trons import Opentron
-from opentrons.util import environment
 
-robot = Opentron()
 
-# Comman:ds =============================================
+# Custom Protocol =============================================
 
-for i in range( ROUNDS ):
+def run_protocol( petries, trays, tiprack, water, trash ):
 
-	pipette.pick_up_tip( tiprack.wells(i) )
+	for petri, tray, tip_well in
+		zip( petries, trays, tiprack.wells() ):
 
-	for tray_idx in range( TOTAL_TRAY_INDICES ):
+		pipette.pick_up_tip( tip_well )
 
-		pipette.aspirate( 100 , water )
-		pipette.aspirate( 50  , petries[i] )
+		for tray_well in tray.wells():
 
-		pipette.dispense( trays[i].well( tray_idx ) )
+			pipette.aspirate( 100 , water )
+			pipette.aspirate( 50  , petri )
+			pipette.dispense( tray_well )
 
-	pipette.drop_tip( trash )
+		pipette.drop_tip( trash )
+
+
+# Run Protocol =================================================
+
+run_protocol( petries, trays, tiprack, water_trough, trash )
