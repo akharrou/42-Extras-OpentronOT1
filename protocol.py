@@ -5,6 +5,7 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 from opentrons import containers, instruments
+from math import cos, sin
 
 # Container Types ======================================
 
@@ -56,16 +57,44 @@ pipette = instruments.Pipette(
 
 # Custom Protocol =============================================
 
+def archimdean_spiral(a, b, theta):
+	"""
+	Archimdean spiral function.
+	"""
+
+	r = a + b * theta
+	return r
+
+def polar_to_cartesian(r, theta):
+	"""
+	Convert from Polar coordinates to Cartesian coordinates.
+	"""
+    x = r * cos(theta)
+    y = r * sin(theta)
+
+	return x, y
+
 def run_protocol( petries, trays, tiprack, waterbowls, trash ):
 
 	for petri, tray, waterbowl, tip_well in zip( petries, trays, waterbowls, tiprack.wells() ):
+
+		_a, _b, _theta = 1, 2, 0
 
 		pipette.pick_up_tip( tip_well )
 
 		for tray_well in tray.wells():
 
-			pipette.aspirate( 100 , waterbowl )
-			pipette.aspirate( 50  , petri )
+			pipette.aspirate( 100 , water )
+
+			_x, _y = polar_to_cartesian(archimdean_spiral(_a, _b, _theta), _theta)
+			_theta += 0.3
+
+			pipette.move_to( Vector(
+				petri._coordinates.coordinates.x + _x,
+				petri._coordinates.coordinates.y + _y,
+				petri._coordinates.coordinates.z
+			), 'arc' ).aspirate( 100 )
+
 			pipette.dispense( tray_well )
 
 		pipette.drop_tip( trash )
