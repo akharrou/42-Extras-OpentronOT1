@@ -4,8 +4,13 @@
 #                                                     #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-from opentrons import containers, instruments
+from opentrons import robot, containers, instruments
+from opentrons.util.vector import Vector
 from math import cos, sin
+
+robot.connect(robot.get_serial_ports_list()[0])
+robot.home()
+robot.head_speed(17000)
 
 # Container Types ======================================
 
@@ -48,9 +53,9 @@ pipette = instruments.Pipette(
 	channels        = 1,
 	min_volume      = 0,
 	max_volume      = 200,
+	tip_racks       = tipracks,
 	aspirate_speed  = 300,
 	dispense_speed  = 500,
-	tip_racks       = tipracks,
 	trash_container = trashes[0]
 )
 
@@ -69,8 +74,8 @@ def polar_to_cartesian(r, theta):
 	"""
 	Convert from Polar coordinates to Cartesian coordinates.
 	"""
-    x = r * cos(theta)
-    y = r * sin(theta)
+	x = r * cos(theta)
+	y = r * sin(theta)
 
 	return x, y
 
@@ -78,24 +83,24 @@ def run_protocol( petries, trays, tiprack, waterbowls, trash ):
 
 	for petri, tray, waterbowl, tip_well in zip( petries, trays, waterbowls, tiprack.wells() ):
 
-		_a, _b, _theta = 1, 2, 0
+		_a, _b, _theta = 1, 0.5, 0
 
 		pipette.pick_up_tip( tip_well )
 
 		for tray_well in tray.wells():
 
-			pipette.aspirate( 100 , water )
+			pipette.aspirate( 50 , waterbowl )
 
 			_x, _y = polar_to_cartesian(archimdean_spiral(_a, _b, _theta), _theta)
-			_theta += 0.3
+			_theta += 1
 
-			pipette.move_to( Vector(
+			pipette.move_to(( petri, Vector(
 				petri._coordinates.coordinates.x + _x,
 				petri._coordinates.coordinates.y + _y,
 				petri._coordinates.coordinates.z
-			), 'arc' ).aspirate( 100 )
+			)), 'arc' ).aspirate( 50 )
 
-			pipette.dispense( tray_well )
+			pipette.dispense( tray_well ).blow_out()
 
 		pipette.drop_tip( trash )
 
@@ -103,3 +108,4 @@ def run_protocol( petries, trays, tiprack, waterbowls, trash ):
 # Run Protocol =================================================
 
 run_protocol( petries, trays, tipracks[0], waterbowls, trashes[0] )
+robot.home()
