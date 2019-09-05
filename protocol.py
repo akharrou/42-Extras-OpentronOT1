@@ -14,13 +14,13 @@ robot.head_speed(17000)
 
 # Container Types ======================================
 
-tiprack_type  = 'tiprack-200ul'
-water_type    = 'point'
-trash_type    = 'point'
+tiprack_type   = 'tiprack-200ul'
+water_type     = 'point'
+trash_type     = 'point'
 
-tray_type     = '96-PCR-flat'
-petri_type    = 'point'
-
+tray_type      = '96-PCR-flat'
+petri_type     = 'point'
+petri_diameter = 85
 
 # Maping(s) ============================================
 
@@ -70,6 +70,7 @@ def archimdean_spiral(a, b, theta):
 	r = a + b * theta
 	return r
 
+
 def polar_to_cartesian(r, theta):
 	"""
 	Convert from Polar coordinates to Cartesian coordinates.
@@ -79,11 +80,14 @@ def polar_to_cartesian(r, theta):
 
 	return x, y
 
-def run_protocol( petries, trays, tiprack, waterbowls, trash ):
+
+def run_protocol( petries, petri_diameter, trays, tiprack, waterbowls, trash ):
+
+	step = (petri_diameter / _b) / len(tray.wells())
 
 	for petri, tray, waterbowl, tip_well in zip( petries, trays, waterbowls, tiprack.wells() ):
 
-		_a, _b, _theta = 1, 0.5, 0
+		_a, _b, _theta,  = 0, 0.5, 0
 
 		pipette.pick_up_tip( tip_well )
 
@@ -91,8 +95,8 @@ def run_protocol( petries, trays, tiprack, waterbowls, trash ):
 
 			pipette.aspirate( 50 , waterbowl )
 
-			_x, _y = polar_to_cartesian(archimdean_spiral(_a, _b, _theta), _theta)
-			_theta += 1
+			_x, _y = polar_to_cartesian(archimdean_spiral(_a, _b, _theta, _theta_max), _theta)
+			_theta += step
 
 			pipette.move_to(( petri, Vector(
 				petri._coordinates.coordinates.x + _x,
@@ -107,5 +111,5 @@ def run_protocol( petries, trays, tiprack, waterbowls, trash ):
 
 # Run Protocol =================================================
 
-run_protocol( petries, trays, tipracks[0], waterbowls, trashes[0] )
+run_protocol( petries, petri_diameter, trays, tipracks[0], waterbowls, trashes[0] )
 robot.home()
