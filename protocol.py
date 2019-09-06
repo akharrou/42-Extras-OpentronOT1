@@ -85,12 +85,12 @@ def polar_to_cartesian(r, theta):
 
 def run_protocol( petries, petri_diameter, trays, tiprack, waterbowls, trash ):
 
-	_a, _b = 0, 0.5
+	_a, _b = 5, 1
 
 	for petri, tray, waterbowl, tip_well in zip( petries, trays, waterbowls, tiprack.wells() ):
 
-		_theta = 0
-		step = (petri_diameter / _b) / len(tray.wells())
+		_theta = 1
+		step = (petri_diameter / 2 - 2 - _a) / _b / len(tray.wells())
 
 		pipette.pick_up_tip( tip_well )
 
