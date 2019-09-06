@@ -74,7 +74,7 @@ def archimdean_spiral(a, b, theta):
 
 def polar_to_cartesian(r, theta):
 	"""
-	Convert from Polar coordinates to Cartesian coordinates.
+	Convert Polar coordinates to Cartesian coordinates.
 	"""
 
 	x = r * cos(theta)
@@ -97,12 +97,12 @@ def run_protocol( petries, petri_diameter, trays, tiprack, waterbowls, trash ):
 
 			pipette.aspirate( 50 , waterbowl )
 
-			_x, _y = polar_to_cartesian(archimdean_spiral(_a, _b, _theta, _theta_max), _theta)
+			dx, dy = polar_to_cartesian(archimdean_spiral(_a, _b, _theta, _theta_max), _theta)
 			_theta += step
 
 			pipette.move_to(( petri, Vector(
-				petri._coordinates.coordinates.x + _x,
-				petri._coordinates.coordinates.y + _y,
+				petri._coordinates.coordinates.x + dx,
+				petri._coordinates.coordinates.y + dy,
 				petri._coordinates.coordinates.z
 			)), 'arc' ).aspirate( 50 )
 
