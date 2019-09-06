@@ -3,7 +3,7 @@
         "b:p200_Single": {
             "max_volume": 200,
             "positions": {
-                "drop_tip": 25.0101,
+                "drop_tip": 26.0101,
                 "blow_out": 24.0101,
                 "bottom": 22.0101,
                 "top": 9.0101
