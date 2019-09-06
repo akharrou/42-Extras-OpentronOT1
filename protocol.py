@@ -85,11 +85,12 @@ def polar_to_cartesian(r, theta):
 
 def run_protocol( petries, petri_diameter, trays, tiprack, waterbowls, trash ):
 
-	step = (petri_diameter / _b) / len(tray.wells())
+	_a, _b = 0, 0.5
 
 	for petri, tray, waterbowl, tip_well in zip( petries, trays, waterbowls, tiprack.wells() ):
 
-		_a, _b, _theta,  = 0, 0.5, 0
+		_theta = 0
+		step = (petri_diameter / _b) / len(tray.wells())
 
 		pipette.pick_up_tip( tip_well )
 
@@ -97,7 +98,7 @@ def run_protocol( petries, petri_diameter, trays, tiprack, waterbowls, trash ):
 
 			pipette.aspirate( 50 , waterbowl )
 
-			dx, dy = polar_to_cartesian(archimdean_spiral(_a, _b, _theta, _theta_max), _theta)
+			dx, dy = polar_to_cartesian(archimdean_spiral(_a, _b, _theta), _theta)
 			_theta += step
 
 			pipette.move_to(( petri, Vector(
@@ -106,7 +107,7 @@ def run_protocol( petries, petri_diameter, trays, tiprack, waterbowls, trash ):
 				petri._coordinates.coordinates.z
 			)), 'arc' ).aspirate( 50 )
 
-			pipette.dispense( tray_well ).blow_out()
+			pipette.dispense( tray_well ).blow_out().aspirate(5)
 
 		pipette.drop_tip( trash )
 
