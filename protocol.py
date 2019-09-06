@@ -9,8 +9,8 @@ from opentrons.util.vector import Vector
 from math import cos, sin
 
 robot.connect(robot.get_serial_ports_list()[0])
-robot.home()
 robot.head_speed(17000)
+robot.home()
 
 # Container Types ======================================
 
@@ -68,6 +68,7 @@ def archimdean_spiral(a, b, theta):
 	"""
 
 	r = a + b * theta
+
 	return r
 
 
@@ -75,6 +76,7 @@ def polar_to_cartesian(r, theta):
 	"""
 	Convert from Polar coordinates to Cartesian coordinates.
 	"""
+
 	x = r * cos(theta)
 	y = r * sin(theta)
 
