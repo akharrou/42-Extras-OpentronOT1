@@ -4,12 +4,13 @@
 #                                                     #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+from opentrons.containers import unpack_location
 from opentrons import robot, containers, instruments
 from opentrons.util.vector import Vector
 from math import cos, sin
 
 robot.connect(robot.get_serial_ports_list()[0])
-robot.head_speed(17000)
+robot.head_speed(20000)
 robot.home()
 
 # Container Types ======================================
@@ -48,68 +49,74 @@ trays       = [ containers.load ( tray_type    , slot ) for slot in tray_slots  
 # Instruments(s) ======================================
 
 pipette = instruments.Pipette(
-	axis            = 'b',
-	name            = 'p200_Single',
-	channels        = 1,
-	min_volume      = 0,
-	max_volume      = 200,
-	tip_racks       = tipracks,
-	aspirate_speed  = 300,
-	dispense_speed  = 500,
-	trash_container = trashes[0]
+    axis            = 'b',
+    name            = 'p200_Single',
+    channels        = 1,
+    min_volume      = 0,
+    max_volume      = 200,
+    tip_racks       = tipracks,
+    aspirate_speed  = 2000,
+    dispense_speed  = 2000,
+    trash_container = trashes[0]
 )
 
 
 # Custom Protocol =============================================
 
 def archimdean_spiral(a, b, theta):
-	"""
-	Archimdean spiral function.
-	"""
+    """
+    Archimdean spiral function.
+    """
 
-	r = a + b * theta
+    r = a + b * theta
 
-	return r
+    return r
 
 
 def polar_to_cartesian(r, theta):
-	"""
-	Convert Polar coordinates to Cartesian coordinates.
-	"""
+    """
+    Convert Polar coordinates to Cartesian coordinates.
+    """
 
-	x = r * cos(theta)
-	y = r * sin(theta)
+    x = r * cos(theta)
+    y = r * sin(theta)
 
-	return x, y
+    return x, y
 
 
 def run_protocol( petries, petri_diameter, trays, tiprack, waterbowls, trash ):
 
-	_a, _b = 5, 1
+    _a, _b = 5, 1
 
-	for petri, tray, waterbowl, tip_well in zip( petries, trays, waterbowls, tiprack.wells() ):
+    for petri, tray, waterbowl, tip_well in zip( petries, trays, waterbowls, tiprack.wells() ):
 
-		_theta = 1
-		step = (petri_diameter / 2 - 2 - _a) / _b / len(tray.wells())
+        _theta = 1
+        step = (petri_diameter / 2 - 2 - _a) / _b / len(tray.wells())
 
-		pipette.pick_up_tip( tip_well )
+        pipette.pick_up_tip( tip_well )
 
-		for tray_well in tray.wells():
+        for tray_well in tray.wells():
 
-			pipette.aspirate( 50 , waterbowl )
+            pipette.move_to(( waterbowl, Vector(0, 0, 20) ), 'arc').aspirate(60)
+            pipette.aspirate( 50 , waterbowl )
 
-			dx, dy = polar_to_cartesian(archimdean_spiral(_a, _b, _theta), _theta)
-			_theta += step
+            dx, dy = polar_to_cartesian(archimdean_spiral(_a, _b, _theta), _theta)
+            _theta += step
 
-			pipette.move_to(( petri, Vector(
-				petri._coordinates.coordinates.x + dx,
-				petri._coordinates.coordinates.y + dy,
-				petri._coordinates.coordinates.z
-			)), 'arc' ).aspirate( 50 )
+            pipette.move_to(( petri, Vector(dx, dy, 10)), 'arc')
+            pipette.aspirate(20)
+            pipette.move_to(( petri, Vector(dx, dy, 0)), 'arc').aspirate(70)
 
-			pipette.dispense( tray_well ).blow_out().aspirate(5)
+            # Jiggle
+            pipette.move_to(( petri, Vector(dx + 2, dy, 0)), 'direct')
+            pipette.move_to(( petri, Vector(dx + -2, dy, 0)), 'direct')
+            pipette.move_to(( petri, Vector(dx, dy, 0)), 'direct')
+            pipette.move_to(( petri, Vector(dx, dy + 2, 0)), 'direct')
+            pipette.move_to(( petri, Vector(dx, dy + -2, 0)), 'direct')
 
-		pipette.drop_tip( trash )
+            pipette.dispense( 200, tray_well ).blow_out()
+
+        pipette.drop_tip( trash )
 
 
 # Run Protocol =================================================
