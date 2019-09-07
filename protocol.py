@@ -21,7 +21,6 @@ trash_type     = 'point'
 
 tray_type      = '96-PCR-flat'
 petri_type     = 'point'
-petri_diameter = 85
 
 # Maping(s) ============================================
 
@@ -45,6 +44,7 @@ waterbowls  = [ containers.load ( water_type   , slot ) for slot in water_slots 
 petries     = [ containers.load ( petri_type   , slot ) for slot in petri_slots   ]
 trays       = [ containers.load ( tray_type    , slot ) for slot in tray_slots    ]
 
+petri_diameter = 85
 
 # Instruments(s) ======================================
 
@@ -97,22 +97,22 @@ def run_protocol( petries, petri_diameter, trays, tiprack, waterbowls, trash ):
 
         for tray_well in tray.wells():
 
-            pipette.move_to(( waterbowl, Vector(0, 0, 20) ), 'arc').aspirate(60)
+            pipette.move_to(( waterbowl, Vector( 0, 0, 20 ) ), 'arc' ).aspirate( 60 )
             pipette.aspirate( 50 , waterbowl )
 
             dx, dy = polar_to_cartesian(archimdean_spiral(_a, _b, _theta), _theta)
             _theta += step
 
-            pipette.move_to(( petri, Vector(dx, dy, 10)), 'arc')
-            pipette.aspirate(20)
-            pipette.move_to(( petri, Vector(dx, dy, 0)), 'arc').aspirate(70)
+            pipette.move_to( ( petri, Vector( dx, dy, 10 )), 'arc' )
+            pipette.aspirate( 20 )
+            pipette.move_to( ( petri, Vector( dx, dy, 0  )), 'arc' ).aspirate( 70 )
 
             # Jiggle
-            pipette.move_to(( petri, Vector(dx + 2, dy, 0)), 'direct')
-            pipette.move_to(( petri, Vector(dx + -2, dy, 0)), 'direct')
-            pipette.move_to(( petri, Vector(dx, dy, 0)), 'direct')
-            pipette.move_to(( petri, Vector(dx, dy + 2, 0)), 'direct')
-            pipette.move_to(( petri, Vector(dx, dy + -2, 0)), 'direct')
+            pipette.move_to( ( petri, Vector( dx + 3 , dy     , 0 ) ), 'direct' )
+            pipette.move_to( ( petri, Vector( dx - 3 , dy     , 0 ) ), 'direct' )
+            pipette.move_to( ( petri, Vector( dx     , dy     , 0 ) ), 'direct' )
+            pipette.move_to( ( petri, Vector( dx     , dy + 3 , 0 ) ), 'direct' )
+            pipette.move_to( ( petri, Vector( dx     , dy - 3 , 0 ) ), 'direct' )
 
             pipette.dispense( 200, tray_well ).blow_out()
 
