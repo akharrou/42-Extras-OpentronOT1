@@ -6,7 +6,7 @@ Opentron OT1 -- Custom Protocol:
 
     DESCRIPTION
         With this protocol you can divide up a living organism
-        (held on a standard petri dish) into smaller pieces
+        (held on a standard 85x15 petri dish) into smaller pieces
         and have them grow independently in tray wells (water is
         provided in each tray well).
 
@@ -25,12 +25,6 @@ Opentron OT1 -- Custom Protocol:
             
         Instruments:
             - Single (200-1000ul) Pipette (set on the b axis)
-
-    CONFIGURABLES
-    
-        - waterbowl dimensions
-        - petri dish dimensions
-        - pipette size (200-1000ul)
 """
 
 from opentrons import robot, containers, instruments
