@@ -5,7 +5,6 @@ Opentron OT1 -- Custom Protocol:
         Mushroom Divi-up
 
     DESCRIPTION
-
         With this protocol you can divide up a living organism
         (held on a standard petri dish) into smaller pieces
         and have them grow independently in tray wells (water is
@@ -16,14 +15,14 @@ Opentron OT1 -- Custom Protocol:
         (archimedian) spiral.
 
     MATERIALS NEEDED
-
-        Labware:    
+        
+        Labware:
             - tiprack
             - trash
             - waterbowl(s)
             - petri dish(es)
             - 96-PCR flat tray(s)
-
+            
         Instruments:
             - Single (200-1000ul) Pipette (set on the b axis)
 
@@ -32,7 +31,6 @@ Opentron OT1 -- Custom Protocol:
         - waterbowl dimensions
         - petri dish dimensions
         - pipette size (200-1000ul)
-
 """
 
 from opentrons import robot, containers, instruments
