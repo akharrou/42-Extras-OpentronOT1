@@ -9,9 +9,13 @@ from opentrons import robot, containers, instruments
 from opentrons.util.vector import Vector
 from math import cos, sin
 
+
+# Connect to & Configure Robot
+
 robot.connect(robot.get_serial_ports_list()[0])
 robot.head_speed(20000)
 robot.home()
+
 
 # Container Types ======================================
 
@@ -21,6 +25,7 @@ trash_type     = 'point'
 
 tray_type      = '96-PCR-flat'
 petri_type     = 'point'
+
 
 # Maping(s) ============================================
 
@@ -46,6 +51,7 @@ trays       = [ containers.load ( tray_type    , slot ) for slot in tray_slots  
 
 petri_diameter = 85
 
+
 # Instruments(s) ======================================
 
 pipette = instruments.Pipette(
@@ -53,10 +59,10 @@ pipette = instruments.Pipette(
     name            = 'p200_Single',
     channels        = 1,
     min_volume      = 0,
-    max_volume      = 200,
+    max_volume      = 1000,
     tip_racks       = tipracks,
-    aspirate_speed  = 2000,
-    dispense_speed  = 2000,
+    aspirate_speed  = 1000,
+    dispense_speed  = 1000,
     trash_container = trashes[0]
 )
 
@@ -97,24 +103,28 @@ def run_protocol( petries, petri_diameter, trays, tiprack, waterbowls, trash ):
 
         for tray_well in tray.wells():
 
-            pipette.move_to(( waterbowl, Vector( 0, 0, 20 ) ), 'arc' ).aspirate( 60 )
-            pipette.aspirate( 50 , waterbowl )
+            # Aspirate a bit of air followed by a bit of water, twice
+            pipette.move_to(( waterbowl, Vector( 0, 0, 20 ) ), 'arc' ).aspirate( 200 )
+            pipette.aspirate( 100 , waterbowl )
+            pipette.move_to(( waterbowl, Vector( 0, 0, 20 ) ), 'arc' ).aspirate( 100 )
+            pipette.aspirate( 100 , waterbowl )
 
+            # Compute Petri X, Y
             dx, dy = polar_to_cartesian(archimdean_spiral(_a, _b, _theta), _theta)
             _theta += step
 
-            pipette.move_to( ( petri, Vector( dx, dy, 10 )), 'arc' )
-            pipette.aspirate( 20 )
-            pipette.move_to( ( petri, Vector( dx, dy, 0  )), 'arc' ).aspirate( 70 )
+            # Aspirate Mushroom but stay fixed on the ground
+            pipette.move_to( ( petri, Vector( dx, dy, 0  ) ), 'arc' ).delay(1).aspirate( 500 )
 
-            # Jiggle
+            # Jiggle Pipette to Rip Mushroom off the Petri Dish
             pipette.move_to( ( petri, Vector( dx + 3 , dy     , 0 ) ), 'direct' )
             pipette.move_to( ( petri, Vector( dx - 3 , dy     , 0 ) ), 'direct' )
             pipette.move_to( ( petri, Vector( dx     , dy     , 0 ) ), 'direct' )
             pipette.move_to( ( petri, Vector( dx     , dy + 3 , 0 ) ), 'direct' )
             pipette.move_to( ( petri, Vector( dx     , dy - 3 , 0 ) ), 'direct' )
 
-            pipette.dispense( 200, tray_well ).blow_out()
+            # Place aspirated contents in Tray well
+            pipette.dispense( tray_well ).blow_out()
 
         pipette.drop_tip( trash )
 
@@ -123,3 +133,4 @@ def run_protocol( petries, petri_diameter, trays, tiprack, waterbowls, trash ):
 
 run_protocol( petries, petri_diameter, trays, tipracks[0], waterbowls, trashes[0] )
 robot.home()
+print('Process Complete.')
