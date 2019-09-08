@@ -139,14 +139,14 @@ def run_custom_protocol( petries, petridish_diameter, trays, tiprack, waterbowls
             pipette.move_to(( waterbowl, Vector( 0, 0, 20 ) ), 'arc' ).aspirate( 100 )
             pipette.aspirate( 100 , waterbowl )
 
-            # Compute new petri X, Y coordinates that we will aspirate specimen from
+            # Compute new petri X, Y coordinates that we will aspirate organism from
             dx, dy = polar_to_cartesian(archimdean_spiral(_a, _b, _theta), _theta)
             _theta += step
 
-            # Apply suction to specimen and stay fixed on the ground
+            # Apply suction to organism and stay fixed on the ground
             pipette.move_to( ( petri, Vector( dx, dy, 0 ) ), 'arc' ).delay(1).aspirate( 500 )
 
-            # Jiggle pipette in all directions so as to detach specimen from its surroundings
+            # Jiggle pipette in all directions so as to detach organism from its surroundings
             pipette.move_to( ( petri, Vector( dx + 3 , dy     , 0 ) ), 'direct' )
             pipette.move_to( ( petri, Vector( dx - 3 , dy     , 0 ) ), 'direct' )
             pipette.move_to( ( petri, Vector( dx     , dy     , 0 ) ), 'direct' )
