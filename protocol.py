@@ -11,7 +11,7 @@ Opentron OT1 -- Custom Protocol:
         provided in each tray well).
 
         Note: we extract the organism from distinct points in the
-        petri dish.
+        petri dish (forming a (archimedian) spiral as we go).
 
     MATERIALS NEEDED
         
