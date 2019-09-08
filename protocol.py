@@ -1,7 +1,7 @@
 """
 Opentron OT1 -- Custom Protocol:
 
-    NAME
+    PROTOCOL NAME
         Mushroom Divi-up
 
     DESCRIPTION
