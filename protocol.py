@@ -1,8 +1,39 @@
-# # # # # # # # # # # # # # # # # # # # # # # # # # # #
-#                                                     #
-#                       PROTOCOL                      #
-#                                                     #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # #
+"""
+Opentron OT1 -- Custom Protocol:
+
+    NAME
+        Mushroom Divi-up
+
+    DESCRIPTION
+
+        With this protocol you can divide up a living organism
+        (held on a standard petri dish) into smaller pieces
+        and have them grow independently in tray wells (water is
+        provided in each tray well).
+
+        Note: we extract the organism from distinct points in the
+        petri dish, the end shape that is aimed for is that of a
+        (archimedian) spiral.
+
+    MATERIALS NEEDED
+
+        Labware:    
+            - tiprack
+            - trash
+            - waterbowl(s)
+            - petri dish(es)
+            - 96-PCR flat tray(s)
+
+        Instruments:
+            - Single (200-1000ul) Pipette (set on the b axis)
+
+    CONFIGURABLES
+    
+        - waterbowl dimensions
+        - petri dish dimensions
+        - pipette size (200-1000ul)
+
+"""
 
 from opentrons import robot, containers, instruments
 from opentrons.util.vector import Vector
@@ -91,44 +122,14 @@ def polar_to_cartesian(r, theta):
 
 # Define Custom Protocol ==============================
 
-def run_protocol( petries, petridish_diameter, trays, tiprack, waterbowls, trash ):
-    """
-    Opentron OT1 Custom Protocol:
-
-    Labware:    
-        - tiprack            -- x1
-        - trash              -- x1
-        - waterbowls         -- x3
-        - petri dish         -- x3
-        - 96-PCR flat trays  -- x3
-
-    Instruments:
-        - Single (200ul) Pipette (set on the b axis)
-
-    Protocol Overview:
-
-        for each waterbowl, petri, tray
-            
-            1 - pick up tip
-
-            for each well in the tray
-                a - aspirate water
-                b - aspirate a small piece of the specimen
-                c - dispense contents in the well
-
-            2 - drop tip in trash
-
-
-    Note: we aspirate from distinct points in the petri dish,
-    the end shape is that of a (archimedian) spiral.
-    """
+def run_custom_protocol( petries, petridish_diameter, trays, tiprack, waterbowls, trash ):
 
     _a, _b = 5, 1
+    step = (petridish_diameter / 2 - 2 - _a) / _b / len(trays[0].wells())
 
     for petri, tray, waterbowl, tip_well in zip( petries, trays, waterbowls, tiprack.wells() ):
 
         _theta = 1
-        step = (petridish_diameter / 2 - 2 - _a) / _b / len(tray.wells())
 
         pipette.pick_up_tip( tip_well )
 
@@ -162,6 +163,6 @@ def run_protocol( petries, petridish_diameter, trays, tiprack, waterbowls, trash
 
 # Run Protocol ==========================================
 
-run_protocol( petries, petridish_diameter, trays, tipracks[0], waterbowls, trashes[0] )
+run_custom_protocol( petries, petridish_diameter, trays, tipracks[0], waterbowls, trashes[0] )
 robot.home()
 print('Process Complete.')
