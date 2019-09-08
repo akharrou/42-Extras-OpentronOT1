@@ -1,2 +1,2 @@
 # 42-Extras-OpentronOT1
-Opentron OT1 custom script.
+Opentron OT1 custom protocol.
