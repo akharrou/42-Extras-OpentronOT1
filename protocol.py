@@ -121,9 +121,9 @@ def run_protocol( petries, petridish_diameter, trays, tiprack, waterbowls, trash
             _theta += step
 
             # Apply suction to specimen and stay fixed on the ground
-            pipette.move_to( ( petri, Vector( dx, dy, 0  ) ), 'arc' ).delay(1).aspirate( 500 )
+            pipette.move_to( ( petri, Vector( dx, dy, 0 ) ), 'arc' ).delay(1).aspirate( 500 )
 
-            # Jiggle pipette in all directions so as to detach specimen off the petri dish
+            # Jiggle pipette in all directions so as to detach specimen off its surrounding
             pipette.move_to( ( petri, Vector( dx + 3 , dy     , 0 ) ), 'direct' )
             pipette.move_to( ( petri, Vector( dx - 3 , dy     , 0 ) ), 'direct' )
             pipette.move_to( ( petri, Vector( dx     , dy     , 0 ) ), 'direct' )
