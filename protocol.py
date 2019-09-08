@@ -4,7 +4,6 @@
 #                                                     #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-from opentrons.containers import unpack_location
 from opentrons import robot, containers, instruments
 from opentrons.util.vector import Vector
 from math import cos, sin
