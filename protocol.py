@@ -16,7 +16,7 @@ robot.head_speed(20000)
 robot.home()
 
 
-# Defining Container Types ==============================
+# Define Container Types ==============================
 
 tiprack_type   = 'tiprack-200ul'
 water_type     = 'point'
@@ -26,7 +26,7 @@ tray_type      = '96-PCR-flat'
 petri_type     = 'point'
 
 
-# Defining Container Mapping(s) =========================
+# Define Container Mapping(s) =========================
 
 #   | A3 | B3 | C3 | D3 | E3 |
 #   | A2 | B2 | C2 | D2 | E2 |
@@ -40,7 +40,7 @@ petri_slots  = [ 'B2', 'C2', 'D2', ]
 tray_slots   = [ 'B1', 'C1', 'D1', ]
 
 
-# Defining Container(s) =================================
+# Define Container(s) =================================
 
 trashes     = [ containers.load ( trash_type   , slot ) for slot in trash_slots   ]
 tipracks    = [ containers.load ( tiprack_type , slot ) for slot in tiprack_slots ]
@@ -51,7 +51,7 @@ trays       = [ containers.load ( tray_type    , slot ) for slot in tray_slots  
 petridish_diameter = 85
 
 
-# Defining Instruments(s) ===============================
+# Define Instruments(s) ===============================
 
 pipette = instruments.Pipette(
     axis            = 'b',
@@ -66,7 +66,7 @@ pipette = instruments.Pipette(
 )
 
 
-# Utils =================================================
+# Utils ===============================================
 
 def archimdean_spiral(a, b, theta):
     """
@@ -89,13 +89,38 @@ def polar_to_cartesian(r, theta):
     return x, y
 
 
-# Defining Custom Protocol ==============================
+# Define Custom Protocol ==============================
 
 def run_protocol( petries, petridish_diameter, trays, tiprack, waterbowls, trash ):
     """
-    Custom Opentron OT Version 1 Protocol:
+    Opentron OT1 Custom Protocol:
 
-    Description: TODO
+    Labware:    
+        - tiprack            -- x1
+        - trash              -- x1
+        - waterbowls         -- x3
+        - petri dish         -- x3
+        - 96-PCR flat trays  -- x3
+
+    Instruments:
+        - Single (200ul) Pipette (set on the b axis)
+
+    Protocol Overview:
+
+        for each waterbowl, petri, tray
+            
+            1 - pick up tip
+
+            for each well in the tray
+                a - aspirate water
+                b - aspirate a small piece of the specimen
+                c - dispense contents in the well
+
+            2 - drop tip in trash
+
+
+    Note: we aspirate from distinct points in the petri dish,
+    the end shape is that of a (archimedian) spiral.
     """
 
     _a, _b = 5, 1
@@ -122,7 +147,7 @@ def run_protocol( petries, petridish_diameter, trays, tiprack, waterbowls, trash
             # Apply suction to specimen and stay fixed on the ground
             pipette.move_to( ( petri, Vector( dx, dy, 0 ) ), 'arc' ).delay(1).aspirate( 500 )
 
-            # Jiggle pipette in all directions so as to detach specimen off its surrounding
+            # Jiggle pipette in all directions so as to detach specimen from its surroundings
             pipette.move_to( ( petri, Vector( dx + 3 , dy     , 0 ) ), 'direct' )
             pipette.move_to( ( petri, Vector( dx - 3 , dy     , 0 ) ), 'direct' )
             pipette.move_to( ( petri, Vector( dx     , dy     , 0 ) ), 'direct' )
