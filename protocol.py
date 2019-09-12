@@ -5,7 +5,7 @@ Opentron OT1 -- Custom Protocol:
         Mushroom Divi-up
 
     DESCRIPTION
-        With this protocol you can divide up a living organism
+        With this protocol you can divide up living mycelium
         (held on a standard 85x15 petri dish) into smaller pieces
         and have them grow independently in tray wells (water is
         provided in each tray well).
@@ -14,14 +14,14 @@ Opentron OT1 -- Custom Protocol:
         petri dish (forming a (archimedian) spiral as we go).
 
     MATERIALS NEEDED
-        
+
         Labware:
             - tiprack
             - trash
             - waterbowl(s)
             - petri dish(es)
             - 96-PCR flat tray(s)
-            
+
         Instruments:
             - Single (200-1000ul) Pipette (set on the b axis)
 """
@@ -115,9 +115,11 @@ def polar_to_cartesian(r, theta):
 
 def run_custom_protocol( petries, petridish_diameter, trays, tiprack, waterbowls, trash ):
 
+    # Define Archimedian Spiral function constants
     _a, _b = 5, 1
     step = (petridish_diameter / 2 - 2 - _a) / _b / len(trays[0].wells())
 
+    # Main Loop
     for petri, tray, waterbowl, tip_well in zip( petries, trays, waterbowls, tiprack.wells() ):
 
         _theta = 1
